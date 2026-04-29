@@ -14,6 +14,7 @@ export default function Footer() {
             <div className="space-y-2">
               <a href="/pages?slug=cosa-facciamo" className="block text-gray-400 hover:text-white">Chi Siamo</a>
               <a href="/sezione/progetti" className="block text-gray-400 hover:text-white">Progetti</a>
+              <a href="/pages?slug=dona-il-5-per-1000" className="block text-gray-400 hover:text-white">Dona il 5x1000</a>
               <a href="/sezione/news" className="block text-gray-400 hover:text-white">News</a>
               <a href="/pages?slug=contatti" className="block text-gray-400 hover:text-white">Contatti</a>
             </div>
