@@ -9,6 +9,7 @@
 
   body {
     @apply bg-white text-gray-900;
+    font-family: 'Titillium Web', sans-serif;
   }
 
   html {
