@@ -1,0 +1,17 @@
+:root {
+  --font-size: 16px;
+}
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+
+  body {
+    @apply bg-white text-gray-900;
+  }
+
+  html {
+    font-size: var(--font-size);
+  }
+}
