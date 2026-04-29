@@ -76,3 +76,27 @@
   margin: 1rem 0;
   padding-left: 1rem;
 }
+
+
+
+.btn_dona_ora {
+  align-items: center;
+  background-color: #FE4545;
+  border-radius: 0.375rem;
+  color: #fff;
+  display: inline-flex;
+  font-size: 0.95rem;
+  font-weight: 700;
+  height: 2.5rem;
+  line-height: 1;
+  margin: 0;
+  padding: 0 1rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease;
+  vertical-align: middle;
+}
+
+.btn_dona_ora:hover {
+  background-color: rgba(254, 69, 69, 0.9);
+}

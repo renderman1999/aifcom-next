@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Breadcrumb from '@/components/Breadcrumb';
+import Seo from '@/components/Seo';
 import { decodeHtmlEntities, formatItalianDate, getPostBySlug, stripHtml, type WordPressPost as WordPressPostType } from '@/lib/wordpress';
 
 function PostLoadingPlaceholder() {
@@ -80,6 +81,21 @@ export default function WordPressPost() {
   return (
     <section className="py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <Seo
+          title={decodeHtmlEntities(stripHtml(post.title.rendered))}
+          description={stripHtml(post.excerpt.rendered).slice(0, 155)}
+          canonicalPath={`/articoli/${slug}`}
+          image={imageUrl || '/logo_aifcom_header.png'}
+          type="article"
+          jsonLd={{
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: decodeHtmlEntities(stripHtml(post.title.rendered)),
+            datePublished: post.date,
+            image: imageUrl || 'https://www.aifcom.org/logo_aifcom_header.png',
+            mainEntityOfPage: `https://www.aifcom.org/articoli/${slug}`,
+          }}
+        />
         <Breadcrumb
           items={[
             { label: 'Home', to: '/' },

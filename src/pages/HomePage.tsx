@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import Seo from '@/components/Seo';
 import {
   formatItalianDate,
   getLatestPostsByCategorySlug,
@@ -102,6 +103,19 @@ export default function HomePage() {
 
   return (
     <>
+      <Seo
+        title="Home"
+        description="A.I.F.CO.M. - Associazione Italiana Famiglie e Coppie Miste. Supporto a coppie e famiglie miste, servizi, attivita territoriali e ultime news."
+        canonicalPath="/"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: 'A.I.F.CO.M.',
+          url: 'https://www.aifcom.org',
+          logo: 'https://www.aifcom.org/logo_aifcom_header.png',
+        }}
+      />
+
       <section className="relative bg-gray-50 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Breadcrumb from '@/components/Breadcrumb';
+import Seo from '@/components/Seo';
 import { decodeHtmlEntities, getPageBySlug, stripHtml, type WordPressPage as WordPressPageType } from '@/lib/wordpress';
 
 function PageLoadingPlaceholder() {
@@ -98,6 +99,18 @@ export default function WordPressPage() {
   return (
     <section className="py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <Seo
+          title={decodeHtmlEntities(stripHtml(page.title.rendered))}
+          description={stripHtml(page.content.rendered).slice(0, 155)}
+          canonicalPath={`/pages?slug=${slug}`}
+          type="article"
+          jsonLd={{
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: decodeHtmlEntities(stripHtml(page.title.rendered)),
+            url: `https://www.aifcom.org/pages?slug=${slug}`,
+          }}
+        />
         <Breadcrumb
           items={[
             { label: 'Home', to: '/' },

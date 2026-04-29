@@ -28,6 +28,26 @@ export type WordPressPage = {
   content: WordPressRenderedText;
 };
 
+export type WordPressMenuItemApi = {
+  ID: number;
+  title: string;
+  url: string;
+  target: string;
+  classes?: string[];
+  menu_order: number;
+  menu_item_parent: string;
+  object: string;
+};
+
+export type WordPressMenuItem = {
+  id: number;
+  label: string;
+  url: string | null;
+  target: string | null;
+  classes: string[];
+  children: WordPressMenuItem[];
+};
+
 const configuredApiRoot = import.meta.env.VITE_WP_API_URL?.trim();
 const hasUnresolvedTemplate = configuredApiRoot?.includes('${');
 const sanitizedApiRoot = hasUnresolvedTemplate ? undefined : configuredApiRoot;
@@ -92,6 +112,83 @@ export async function getPageBySlug(slug: string, signal?: AbortSignal) {
 export async function getPostBySlug(slug: string, signal?: AbortSignal) {
   const posts = await fetchWp<WordPressPost[]>(`/posts?slug=${encodeURIComponent(slug)}&_embed`, signal);
   return posts[0] ?? null;
+}
+
+function normalizeWordPressMenuUrl(item: WordPressMenuItemApi) {
+  if (!item.url || item.url === '#') {
+    return null;
+  }
+
+  const normalized = item.url.trim();
+  const isAbsolute = /^https?:\/\//i.test(normalized);
+  const isAifcomDomain = /^https?:\/\/(www\.)?aifcom\.org/i.test(normalized);
+  const canParseAsUrl = isAbsolute || normalized.startsWith('/');
+
+  if (canParseAsUrl) {
+    const parsed = new URL(normalized, 'https://www.aifcom.org');
+    const pathname = parsed.pathname.replace(/\/+$/, '');
+    const segments = pathname.split('/').filter(Boolean);
+    const lastSegment = segments[segments.length - 1] ?? '';
+
+    if (item.object === 'page' && lastSegment) {
+      return `/pages?slug=${lastSegment}`;
+    }
+
+    if (item.object === 'category' && ['news', 'articoli', 'storie', 'eventi-e-infoformazione'].includes(lastSegment)) {
+      return '/#news';
+    }
+
+    if (isAifcomDomain && lastSegment) {
+      if (pathname.startsWith('/sezione/')) {
+        return '/#news';
+      }
+      return `/pages?slug=${lastSegment}`;
+    }
+
+    if (isAifcomDomain && !lastSegment) {
+      return '/';
+    }
+  }
+
+  return normalized;
+}
+
+export async function getMenuTree(signal?: AbortSignal) {
+  const rawItems = await fetchWp<WordPressMenuItemApi[]>('/menu', signal);
+  const sortedItems = [...rawItems].sort((a, b) => a.menu_order - b.menu_order);
+  const byId = new Map<number, WordPressMenuItem>();
+  const roots: WordPressMenuItem[] = [];
+
+  sortedItems.forEach((item) => {
+    byId.set(item.ID, {
+      id: item.ID,
+      label: decodeHtmlEntities(item.title),
+      url: normalizeWordPressMenuUrl(item),
+      target: item.target || null,
+      classes: (item.classes ?? []).filter((className) => className.trim().length > 0),
+      children: [],
+    });
+  });
+
+  sortedItems.forEach((item) => {
+    const current = byId.get(item.ID);
+    if (!current) return;
+
+    const parentId = Number(item.menu_item_parent);
+    if (!parentId) {
+      roots.push(current);
+      return;
+    }
+
+    const parent = byId.get(parentId);
+    if (parent) {
+      parent.children.push(current);
+    } else {
+      roots.push(current);
+    }
+  });
+
+  return roots;
 }
 
 export function stripHtml(html: string) {
