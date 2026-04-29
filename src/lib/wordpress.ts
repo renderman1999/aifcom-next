@@ -15,8 +15,10 @@ export type WordPressPost = {
   title: WordPressRenderedText;
   excerpt: WordPressRenderedText;
   content?: WordPressRenderedText;
+  categories?: number[];
   _embedded?: {
     'wp:featuredmedia'?: Array<{ source_url?: string }>;
+    'wp:term'?: Array<Array<{ id: number; slug: string; name: string; taxonomy: string }>>;
   };
 };
 
@@ -37,6 +39,7 @@ export type WordPressMenuItemApi = {
   menu_order: number;
   menu_item_parent: string;
   object: string;
+  type?: string;
 };
 
 export type WordPressMenuItem = {
@@ -104,6 +107,18 @@ export async function getLatestPostsByCategorySlug(slug: string, limit = 6, sign
   );
 }
 
+export async function getPostsByCategorySlug(slug: string, limit = 12, signal?: AbortSignal) {
+  const category = await getCategoryBySlug(slug, signal);
+  if (!category) {
+    return [];
+  }
+
+  return fetchWp<WordPressPost[]>(
+    `/posts?categories=${category.id}&per_page=${limit}&_embed`,
+    signal,
+  );
+}
+
 export async function getPageBySlug(slug: string, signal?: AbortSignal) {
   const pages = await fetchWp<WordPressPage[]>(`/pages?slug=${encodeURIComponent(slug)}`, signal);
   return pages[0] ?? null;
@@ -134,14 +149,23 @@ function normalizeWordPressMenuUrl(item: WordPressMenuItemApi) {
       return `/pages?slug=${lastSegment}`;
     }
 
-    if (item.object === 'category' && ['news', 'articoli', 'storie', 'eventi-e-infoformazione'].includes(lastSegment)) {
-      return '/#news';
+    if (item.object === 'post' && lastSegment) {
+      return `/articoli/${lastSegment}`;
+    }
+
+    if (item.object === 'category' && lastSegment) {
+      return `/sezione/${lastSegment}`;
     }
 
     if (isAifcomDomain && lastSegment) {
       if (pathname.startsWith('/sezione/')) {
-        return '/#news';
+        return `/sezione/${lastSegment}`;
       }
+
+      if (pathname.startsWith('/category/') || pathname.startsWith('/categoria/')) {
+        return `/sezione/${lastSegment}`;
+      }
+
       return `/pages?slug=${lastSegment}`;
     }
 
@@ -211,4 +235,16 @@ export function formatItalianDate(date: string) {
     month: 'long',
     year: 'numeric',
   }).format(new Date(date));
+}
+
+export function getPrimaryCategoryFromPost(post: WordPressPost) {
+  const embeddedTerms = post._embedded?.['wp:term'] ?? [];
+  const flatTerms = embeddedTerms.flat();
+  const categories = flatTerms.filter((term) => term.taxonomy === 'category');
+
+  if (categories.length > 0) {
+    return categories[0];
+  }
+
+  return null;
 }

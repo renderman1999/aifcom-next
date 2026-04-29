@@ -97,7 +97,7 @@ export default function WordPressPage() {
   }
 
   return (
-    <section className="py-20">
+    <section className="py-5">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <Seo
           title={decodeHtmlEntities(stripHtml(page.title.rendered))}

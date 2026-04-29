@@ -105,7 +105,7 @@ export default function Header() {
                 <div className="h-5 w-24 animate-pulse rounded bg-black/15" />
               </>
             ) : (
-              visibleMenu.slice(0, 6).map((item) => (
+              visibleMenu.map((item) => (
                 <div key={item.id} className="group relative">
                   {renderMenuLink(item, 'transition-colors hover:text-[#4393FF]')}
                   {item.children.length > 0 && (

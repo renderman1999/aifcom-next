@@ -2,7 +2,14 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Breadcrumb from '@/components/Breadcrumb';
 import Seo from '@/components/Seo';
-import { decodeHtmlEntities, formatItalianDate, getPostBySlug, stripHtml, type WordPressPost as WordPressPostType } from '@/lib/wordpress';
+import {
+  decodeHtmlEntities,
+  formatItalianDate,
+  getPostBySlug,
+  getPrimaryCategoryFromPost,
+  stripHtml,
+  type WordPressPost as WordPressPostType,
+} from '@/lib/wordpress';
 
 function PostLoadingPlaceholder() {
   return (
@@ -77,9 +84,12 @@ export default function WordPressPost() {
   }
 
   const imageUrl = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+  const primaryCategory = getPrimaryCategoryFromPost(post);
+  const categoryLabel = primaryCategory ? decodeHtmlEntities(primaryCategory.name) : 'News';
+  const categoryLink = primaryCategory ? `/sezione/${primaryCategory.slug}` : '/#news';
 
   return (
-    <section className="py-20">
+    <section className="py-5">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <Seo
           title={decodeHtmlEntities(stripHtml(post.title.rendered))}
@@ -99,7 +109,7 @@ export default function WordPressPost() {
         <Breadcrumb
           items={[
             { label: 'Home', to: '/' },
-            { label: 'News', to: '/#news' },
+            { label: categoryLabel, to: categoryLink },
             { label: decodeHtmlEntities(stripHtml(post.title.rendered)) },
           ]}
         />
