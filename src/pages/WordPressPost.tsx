@@ -3,6 +3,26 @@ import { useParams } from 'react-router-dom';
 import Breadcrumb from '@/components/Breadcrumb';
 import { decodeHtmlEntities, formatItalianDate, getPostBySlug, stripHtml, type WordPressPost as WordPressPostType } from '@/lib/wordpress';
 
+function PostLoadingPlaceholder() {
+  return (
+    <section className="py-20">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-6 h-4 w-56 animate-pulse rounded bg-gray-200" />
+        <div className="mb-8 h-64 w-full animate-pulse rounded-xl bg-gray-200 md:h-96" />
+        <div className="mb-3 h-4 w-40 animate-pulse rounded bg-gray-200" />
+        <div className="mb-8 h-10 w-3/4 animate-pulse rounded bg-gray-200" />
+        <div className="space-y-3">
+          <div className="h-4 w-full animate-pulse rounded bg-gray-200" />
+          <div className="h-4 w-full animate-pulse rounded bg-gray-200" />
+          <div className="h-4 w-11/12 animate-pulse rounded bg-gray-200" />
+          <div className="h-4 w-full animate-pulse rounded bg-gray-200" />
+          <div className="h-4 w-10/12 animate-pulse rounded bg-gray-200" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function WordPressPost() {
   const { slug = '' } = useParams();
   const [post, setPost] = useState<WordPressPostType | null>(null);
@@ -44,7 +64,7 @@ export default function WordPressPost() {
   }, [slug]);
 
   if (isLoading) {
-    return <p className="mx-auto max-w-7xl px-4 py-20 text-center text-gray-600">Caricamento articolo...</p>;
+    return <PostLoadingPlaceholder />;
   }
 
   if (error) {
