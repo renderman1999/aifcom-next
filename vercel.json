@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/wp/:path*",
+      "destination": "https://www.aifcom.org/wp-json/wp/:path*"
+    }
+  ]
+}

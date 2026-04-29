@@ -28,9 +28,13 @@ export type WordPressPage = {
   content: WordPressRenderedText;
 };
 
+const configuredApiRoot = import.meta.env.VITE_WP_API_URL?.trim();
+const hasUnresolvedTemplate = configuredApiRoot?.includes('${');
+const sanitizedApiRoot = hasUnresolvedTemplate ? undefined : configuredApiRoot;
+
 const WP_API_ROOT = import.meta.env.DEV
   ? '/wp-json'
-  : (import.meta.env.VITE_WP_API_URL ?? 'https://www.aifcom.org/wp-json');
+  : (sanitizedApiRoot ?? '/api/wp');
 
 const WP_API_BASE = `${WP_API_ROOT}/wp/${import.meta.env.VITE_WP_API_VERSION ?? 'v2'}`;
 
