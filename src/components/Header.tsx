@@ -132,34 +132,63 @@ export default function Header() {
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
-
-        {mobileMenuOpen && (
-          <div className="space-y-3 pb-4 md:hidden">
-            {isMenuLoading ? (
-              <>
-                <div className="h-6 w-2/3 animate-pulse rounded bg-black/15" />
-                <div className="h-6 w-1/2 animate-pulse rounded bg-black/15" />
-                <div className="h-6 w-3/4 animate-pulse rounded bg-black/15" />
-              </>
-            ) : (
-              visibleMenu.map((item) => (
-                <div key={item.id} className="space-y-1">
-                  {renderMenuLink(item, 'block py-2 hover:text-[#4393FF]')}
-                  {item.children.length > 0 && (
-                    <div className="ml-4 border-l border-black/10 pl-3">
-                      {item.children.map((child) => (
-                        <div key={child.id}>
-                          {renderMenuLink(child, 'block py-1 text-sm text-gray-800 hover:text-[#4393FF]')}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        )}
       </nav>
+
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-[60] bg-[#F3A419] md:hidden">
+          <div className="mx-auto flex h-full max-w-7xl flex-col px-4 sm:px-6">
+            <div className="flex h-20 items-center justify-between">
+              <Link
+                to="/"
+                className="flex items-center gap-3"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <img src="/logo_aifcom_header.png" alt="A.I.F.CO.M." className="h-12 w-auto" />
+                <span className="font-semibold leading-tight">
+                  A.i.f.co.m.
+                </span>
+              </Link>
+
+              <button
+                className="rounded-md p-2"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Chiudi menu"
+              >
+                <X className="h-7 w-7" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto py-6">
+              {isMenuLoading ? (
+                <div className="space-y-4">
+                  <div className="h-8 w-2/3 animate-pulse rounded bg-black/15" />
+                  <div className="h-8 w-1/2 animate-pulse rounded bg-black/15" />
+                  <div className="h-8 w-3/4 animate-pulse rounded bg-black/15" />
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {visibleMenu.map((item) => (
+                    <div key={item.id} className="space-y-2">
+                      <div onClick={() => setMobileMenuOpen(false)}>
+                        {renderMenuLink(item, 'block py-2 text-2xl font-semibold hover:text-[#4393FF]')}
+                      </div>
+                      {item.children.length > 0 && (
+                        <div className="ml-4 border-l border-black/10 pl-3">
+                          {item.children.map((child) => (
+                            <div key={child.id} onClick={() => setMobileMenuOpen(false)}>
+                              {renderMenuLink(child, 'block py-1 text-base text-gray-800 hover:text-[#4393FF]')}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
