@@ -12,10 +12,10 @@ export default function Footer() {
           <div>
             <h3 className="mb-4 text-lg">Link Utili</h3>
             <div className="space-y-2">
-              <a href="/#chi-siamo" className="block text-gray-400 hover:text-white">Chi Siamo</a>
-              <a href="/#servizi" className="block text-gray-400 hover:text-white">Progetti</a>
-              <a href="/#news" className="block text-gray-400 hover:text-white">News</a>
-              <a href="/#contatti" className="block text-gray-400 hover:text-white">Contatti</a>
+              <a href="/pages?slug=cosa-facciamo" className="block text-gray-400 hover:text-white">Chi Siamo</a>
+              <a href="/sezione/progetti" className="block text-gray-400 hover:text-white">Progetti</a>
+              <a href="/sezione/news" className="block text-gray-400 hover:text-white">News</a>
+              <a href="/pages?slug=contatti" className="block text-gray-400 hover:text-white">Contatti</a>
             </div>
           </div>
           <div>

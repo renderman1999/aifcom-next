@@ -122,9 +122,12 @@ export default function HomePage() {
             <h1 className="mb-6 text-4xl md:text-6xl">
               Sei una coppia o<br />una famiglia mista?
             </h1>
-            <button className="rounded-md bg-[#4393FF] px-8 py-3 text-lg font-bold uppercase text-white transition-shadow hover:bg-[#4393FF]/90 hover:shadow-lg">
+            <Link
+              to="/pages?slug=contatti"
+              className="inline-block rounded-md bg-[#4393FF] px-8 py-3 text-lg font-bold uppercase text-white transition-shadow hover:bg-[#4393FF]/90 hover:shadow-lg"
+            >
               Contattaci
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -223,12 +226,22 @@ export default function HomePage() {
             Diventa parte della nostra comunità e contribuisci a costruire una società più inclusiva.
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <button className="rounded-md bg-white px-8 py-3 text-lg text-[#4393FF] transition-colors hover:bg-gray-100">
+            <a
+              href="https://associati.aifcom.org/register.php"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-md bg-white px-8 py-3 text-lg text-[#4393FF] transition-colors hover:bg-gray-100"
+            >
               Associati
-            </button>
-            <button className="rounded-md border-2 border-white px-8 py-3 text-lg text-white transition-colors hover:bg-white hover:text-[#4393FF]">
+            </a>
+            <a
+              href="https://associati.aifcom.org/donate.php"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-md border-2 border-white px-8 py-3 text-lg text-white transition-colors hover:bg-white hover:text-[#4393FF]"
+            >
               Dona il 5x1000
-            </button>
+            </a>
           </div>
         </div>
       </section>
