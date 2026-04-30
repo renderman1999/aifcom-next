@@ -56,22 +56,15 @@ const hasUnresolvedTemplate = configuredApiRoot?.includes('${');
 const sanitizedApiRoot = hasUnresolvedTemplate ? undefined : configuredApiRoot;
 
 /**
- * Production fetch must stay same-origin (e.g. https://aifcom.org/api/wp/...) so Vercel can
- * rewrite to WordPress. An absolute https VITE_WP_API_URL targets www (or another host) and
- * triggers CORS when the site is opened on the apex without www.
- * `vite preview` on localhost may still use an absolute URL from .env.
+ * Production should use the full REST base in VITE_WP_API_URL (e.g. https://www.../cms/wp-json).
+ * Same-origin /api/wp only works if both the apex and www are on Vercel: if the apex redirects
+ * to www and www still points to the old host, /api/wp never hits the Vercel rewrite. Direct
+ * calls to the CMS host work: WordPress already sends Access-Control-Allow-Origin for the
+ * requesting site (aifcom.org, Vercel previews, etc.).
  */
-const isBrowserLocalhost =
-  typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
 const WP_API_ROOT = import.meta.env.DEV
   ? '/wp-json'
-  : isBrowserLocalhost && sanitizedApiRoot && /^https?:\/\//i.test(sanitizedApiRoot)
-    ? sanitizedApiRoot
-    : sanitizedApiRoot && !/^https?:\/\//i.test(sanitizedApiRoot)
-      ? sanitizedApiRoot
-      : '/api/wp';
+  : (sanitizedApiRoot ?? '/api/wp');
 
 const WP_API_BASE = `${WP_API_ROOT}/wp/${import.meta.env.VITE_WP_API_VERSION ?? 'v2'}`;
 
