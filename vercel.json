@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/wp/:path*",
-      "destination": "https://www.aifcom.org/wp-json/wp/:path*"
+      "destination": "https://www.aifcom.org/cms/wp-json/:path*"
     },
     {
       "source": "/(.*)",

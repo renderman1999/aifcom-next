@@ -11,6 +11,7 @@ export default defineConfig({
         target: 'https://www.aifcom.org',
         changeOrigin: true,
         secure: true,
+        rewrite: (path) => `/cms${path}`,
       },
     },
   },

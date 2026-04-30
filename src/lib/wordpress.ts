@@ -142,7 +142,8 @@ function normalizeWordPressMenuUrl(item: WordPressMenuItemApi) {
   if (canParseAsUrl) {
     const parsed = new URL(normalized, 'https://www.aifcom.org');
     const pathname = parsed.pathname.replace(/\/+$/, '');
-    const segments = pathname.split('/').filter(Boolean);
+    const routingPath = pathname.replace(/^\/cms(?=\/|$)/, '') || '/';
+    const segments = routingPath.split('/').filter(Boolean);
     const lastSegment = segments[segments.length - 1] ?? '';
 
     if (item.object === 'page' && lastSegment) {
@@ -158,11 +159,11 @@ function normalizeWordPressMenuUrl(item: WordPressMenuItemApi) {
     }
 
     if (isAifcomDomain && lastSegment) {
-      if (pathname.startsWith('/sezione/')) {
+      if (routingPath.startsWith('/sezione/')) {
         return `/sezione/${lastSegment}`;
       }
 
-      if (pathname.startsWith('/category/') || pathname.startsWith('/categoria/')) {
+      if (routingPath.startsWith('/category/') || routingPath.startsWith('/categoria/')) {
         return `/sezione/${lastSegment}`;
       }
 
