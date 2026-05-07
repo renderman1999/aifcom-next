@@ -1,3 +1,5 @@
+export const config = { runtime: 'edge' };
+
 /**
  * Proxy same-origin /api/wp/* -> WordPress REST.
  * Su Vercel imposta CMS_WP_JSON_BASE_URL senza slash finale, es. https://esempio.it/cms/wp-json
