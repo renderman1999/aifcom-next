@@ -55,19 +55,38 @@ const configuredApiRoot = import.meta.env.VITE_WP_API_URL?.trim();
 const hasUnresolvedTemplate = configuredApiRoot?.includes('${');
 const sanitizedApiRoot = hasUnresolvedTemplate ? undefined : configuredApiRoot;
 
-/**
- * Production should use the full REST base in VITE_WP_API_URL (e.g. https://www.../cms/wp-json).
- * Same-origin /api/wp only works if both the apex and www are on Vercel: if the apex redirects
- * to www and www still points to the old host, /api/wp never hits the Vercel rewrite. Direct
- * calls to the CMS host work: WordPress already sends Access-Control-Allow-Origin for the
- * requesting site (aifcom.org, Vercel previews, etc.).
- * On Vercel, /api/wp is proxied by api/wp/[...path].js using env CMS_WP_JSON_BASE_URL (full base, no trailing slash).
- */
-const WP_API_ROOT = import.meta.env.DEV
-  ? '/wp-json'
-  : (sanitizedApiRoot ?? '/api/wp');
+function normalizeWpJsonBase(raw: string): string {
+  const trimmed = raw.replace(/\/+$/, '');
+  if (trimmed.endsWith('/wp-json')) {
+    return trimmed;
+  }
+  return `${trimmed}/wp-json`;
+}
 
-const WP_API_BASE = `${WP_API_ROOT}/wp/${import.meta.env.VITE_WP_API_VERSION ?? 'v2'}`;
+/**
+ * Production: URL HTTPS verso API WordPress sul VPS da browser = mixed content se usi http://.
+ * Usa lo stesso dominio: `/api/cms/...` viene gestito dalla Serverless Function `api/cms/[...slug].js` su Vercel (CMS_WP_JSON_BASE_URL).
+ * Il segmento `/wp/v2` è il namespace REST di WordPress (non è duplicato “per errore”: prima `/api/cms` è solo il prefisso proxy).
+ */
+function resolveWpApiRoot(): string {
+  if (import.meta.env.DEV) {
+    return '/wp-json';
+  }
+
+  if (!sanitizedApiRoot) {
+    return '/api/cms';
+  }
+
+  if (/^http:\/\//i.test(sanitizedApiRoot)) {
+    return '/api/cms';
+  }
+
+  return normalizeWpJsonBase(sanitizedApiRoot);
+}
+
+const WP_API_ROOT = resolveWpApiRoot();
+
+const WP_API_BASE = `${WP_API_ROOT.replace(/\/+$/, '')}/wp/${import.meta.env.VITE_WP_API_VERSION ?? 'v2'}`;
 
 async function sleep(ms: number) {
   await new Promise((resolve) => setTimeout(resolve, ms));
