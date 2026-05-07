@@ -1,11 +1,10 @@
-export const config = { runtime: 'edge' };
-
 /**
- * Proxy same-origin /api/wp/* -> WordPress REST (es. https://host-del-vps/cms/wp-json/*).
+ * Proxy same-origin /api/wp/* -> WordPress REST.
  * Su Vercel imposta CMS_WP_JSON_BASE_URL senza slash finale, es. https://esempio.it/cms/wp-json
  */
-export default async function handler(request: Request): Promise<Response> {
-  const base = process.env.CMS_WP_JSON_BASE_URL?.replace(/\/+$/, '');
+export default async function handler(request) {
+  const rawBase = process.env.CMS_WP_JSON_BASE_URL;
+  const base = rawBase ? rawBase.replace(/\/+$/, '') : '';
   if (!base) {
     return new Response(
       JSON.stringify({
@@ -29,7 +28,7 @@ export default async function handler(request: Request): Promise<Response> {
     headers.set(key, value);
   });
 
-  const init: RequestInit = {
+  const init = {
     method: request.method,
     headers,
     redirect: 'follow',

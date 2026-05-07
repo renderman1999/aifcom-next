@@ -1,5 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/wp/[...path].js": {
+      "runtime": "edge"
+    }
+  },
   "rewrites": [
     {
       "source": "/((?!api/).*)",
