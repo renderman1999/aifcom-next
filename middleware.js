@@ -8,12 +8,14 @@ function normalizeCmsWpJsonBase(raw) {
 }
 
 export const config = {
+  runtime: 'nodejs',
   matcher: ['/api/wp/:path*', '/api/wp'],
 };
 
 /**
- * Proxy Edge: /api/wp/* -> {CMS_WP_JSON_BASE_URL}/*
- * Necessario perché le cartelle /api con Vite SPA spesso non diventano Serverless Functions su Vercel.
+ * Proxy /api/wp/* -> CMS_WP_JSON_BASE_URL/wp-json/...
+ * Runtime Node.js: su Vercel l'Edge blocca fetch verso URL con hostname = IP numerico ("Direct IP access is not allowed").
+ * In produzione conviene CMS_WP_JSON_BASE_URL con hostname + HTTPS (es. https://cms.tuodominio.it/cms).
  */
 export default async function middleware(request) {
   const base = normalizeCmsWpJsonBase(process.env.CMS_WP_JSON_BASE_URL || '');
@@ -21,7 +23,7 @@ export default async function middleware(request) {
     return new Response(
       JSON.stringify({
         message:
-          'Configure CMS_WP_JSON_BASE_URL for Production on Vercel (and enable it for Edge if prompted).',
+          'Configure CMS_WP_JSON_BASE_URL on Vercel Production (es. http://IP/cms or https://cms.example.com/cms).',
       }),
       { status: 500, headers: { 'content-type': 'application/json' } },
     );
