@@ -64,8 +64,8 @@ function normalizeWpJsonBase(raw: string): string {
 }
 
 /**
- * Production: evita mixed content (browser HTTPS vs CMS http://) usando il proxy stesso dominio.
- * Serverless Vercel: `api/[...slug].js` inoltra /api/wp/v2/… verso CMS_WP_JSON_BASE_URL.
+ * Production: il browser chiama solo https://www.aifcom.org (evita mixed content).
+ * Il proxy è `middleware.js` su Vercel (Edge): /api/wp/* -> CMS_WP_JSON_BASE_URL su VPS.
  */
 function resolveWpApiRoot(): string {
   if (import.meta.env.DEV) {
