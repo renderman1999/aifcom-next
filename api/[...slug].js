@@ -8,8 +8,9 @@ function normalizeCmsWpJsonBase(raw) {
 }
 
 /**
- * Proxy /api/cms/* -> WordPress REST ({CMS…}/wp-json/*).
- * Variabile progetto Vercel: CMS_WP_JSON_BASE_URL (es. http://IP/cms oppure …/cms/wp-json).
+ * Proxy /api/* -> WordPress REST ({CMS}/wp-json/*).
+ * Esempio: GET /api/wp/v2/menu -> GET {CMS_WP_JSON_BASE_URL}/wp/v2/menu
+ * Variabile Vercel: CMS_WP_JSON_BASE_URL (es. http://IP/cms)
  */
 export default async function handler(req, res) {
   try {

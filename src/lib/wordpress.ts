@@ -64,9 +64,8 @@ function normalizeWpJsonBase(raw: string): string {
 }
 
 /**
- * Production: URL HTTPS verso API WordPress sul VPS da browser = mixed content se usi http://.
- * Usa lo stesso dominio: `/api/cms/...` viene gestito dalla Serverless Function `api/cms/[...slug].js` su Vercel (CMS_WP_JSON_BASE_URL).
- * Il segmento `/wp/v2` è il namespace REST di WordPress (non è duplicato “per errore”: prima `/api/cms` è solo il prefisso proxy).
+ * Production: evita mixed content (browser HTTPS vs CMS http://) usando il proxy stesso dominio.
+ * Serverless Vercel: `api/[...slug].js` inoltra /api/wp/v2/… verso CMS_WP_JSON_BASE_URL.
  */
 function resolveWpApiRoot(): string {
   if (import.meta.env.DEV) {
@@ -74,11 +73,11 @@ function resolveWpApiRoot(): string {
   }
 
   if (!sanitizedApiRoot) {
-    return '/api/cms';
+    return '/api';
   }
 
   if (/^http:\/\//i.test(sanitizedApiRoot)) {
-    return '/api/cms';
+    return '/api';
   }
 
   return normalizeWpJsonBase(sanitizedApiRoot);
