@@ -61,6 +61,7 @@ const sanitizedApiRoot = hasUnresolvedTemplate ? undefined : configuredApiRoot;
  * to www and www still points to the old host, /api/wp never hits the Vercel rewrite. Direct
  * calls to the CMS host work: WordPress already sends Access-Control-Allow-Origin for the
  * requesting site (aifcom.org, Vercel previews, etc.).
+ * On Vercel, /api/wp is proxied by api/wp/[...path].ts using env CMS_WP_JSON_BASE_URL (full base, no trailing slash).
  */
 const WP_API_ROOT = import.meta.env.DEV
   ? '/wp-json'
