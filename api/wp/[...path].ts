@@ -1,4 +1,4 @@
-export const config = { runtime: 'edge' as const };
+export const config = { runtime: 'edge' };
 
 /**
  * Proxy same-origin /api/wp/* -> WordPress REST (es. https://host-del-vps/cms/wp-json/*).
